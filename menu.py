@@ -1,5 +1,5 @@
-from pygame import *
-
+import pygame 
+import sys
 pygame.font.init()
 pygame.init()
 
@@ -12,41 +12,32 @@ BLACK = (0, 0, 0)
 font = pygame.font.SysFont("arialblack", 40)
 
 
-#menu types# Create a menu with options
-start_menu = ["Start Game", 
-                  "Leader Board", 
-                  "Options",
-                  "Quit"]
-menu = Menu(menu_options, font, screen)
+
+
 
 class Menu:
-    def __init__(self, x, y, options):
-        self.x = x
-        self.y = y
+    def __init__(self, screen, options):
+        self.screen = screen
         self.options = options  # List of menu options (text)
         self.selected = 0  # Index of the currently selected option
 
     def draw(self):
-        self.screen.fill("grey")  # Clear the screen
-        for i, option in enumerate(self.options):
-            color = TEXT_COL if i == self.selected_option else WHITE
-            img = self.font.render(option, True, color)
-            # Center the text horizontally and adjust vertically
-            self.screen.blit(img, (SCREEN_WIDTH // 2 - img.get_width() // 2, 
-                                   SCREEN_HEIGHT // 2 - len(self.options) * 20 + i * 40))
-        pygame.display.flip()  # Update the display
+        # Fill the screen with black to clear previous drawings
+        self.screen.fill(BLACK)
 
-    def draw_menu(self, screen):
-        # Loop through the menu options and display them
+        # Create a semi-transparent grey overlay
+        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)  # Create a surface with an alpha channel
+        overlay.fill((128, 128, 128, 128))  # Fill with grey and 50% opacity (RGBA)
+        self.screen.blit(overlay, (0, 0))  # Blit the overlay on top of the screen
+
         for i, option in enumerate(self.options):
-            if i == self.selected:
-                # Highlight selected option
-                self.draw_text(screen, option, font, WHITE, self.x, self.y + i * 60)
-            else:
-                self.draw_text(screen, option, font, TEXT_COL, self.x, self.y + i * 60)
+            color = TEXT_COL if i == self.selected else WHITE
+            img = font.render(option, True, color)
+            # Center the text horizontally and adjust vertically
+            self.screen.blit(img, (self.screen.get_width() // 2 - img.get_width() // 2, 
+                                self.screen.get_height() // 2 - len(self.options) * 20 + i * 40))
 
     def move_selection(self, direction):
-        # Move the selection up or down in the menu
         self.selected += direction
         if self.selected < 0:
             self.selected = len(self.options) - 1  # Wrap to the bottom
@@ -63,19 +54,11 @@ class Menu:
                 return self.options[self.selected]  # Return the selected option
         return None
 
-    def make_menu(self):# Main loop
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
 
-            selected_option = self.handle_event()
-            if selected_option == "Start Game":
-                break  # Exit the menu loop to start the game
-            elif selected_option == "Quit":
-                pygame.quit()
-                sys.exit()
 
-            self.draw()  # Draw the menu
-
+#menu types# Create a menu with options
+"""start_menu = ["Start Game", 
+                  "Leader Board", 
+                  "Options",
+                  "Quit"]
+menu = Menu(menu_options, font, screen)"""

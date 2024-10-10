@@ -8,12 +8,16 @@ from shot import Shot
 from menu import *
 
 def main():
+    pygame.font.init()
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
 
-    draw_text(screen,"Press SPACE to pause",font, TEXT_COL, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    
 
+    
+
+    # Game initialization
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()

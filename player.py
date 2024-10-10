@@ -38,8 +38,9 @@ class Player(CircleShape):
             self.rotate(dt)
         if keys[pygame.K_SPACE]:
             self.shoot()
-        if keys[pygame.K_ESCAPE]:
-            in_menu = True
+        
+            
+    
             
             
             

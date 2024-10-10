@@ -12,7 +12,9 @@ BLACK = (0, 0, 0)
 font = pygame.font.SysFont("arialblack", 40)
 
 
-
+start_menu = ["Start Game", "Leader Board", "Options", "Quit"]
+options_menu = []
+leader_board = []
 
 
 class Menu:
@@ -21,22 +23,29 @@ class Menu:
         self.options = options  # List of menu options (text)
         self.selected = 0  # Index of the currently selected option
 
+    def get_subsurface(self):
+        # Create a subsurface of the current game state
+        if self.screen:
+            # Create a copy of the screen
+            self.subsurface = pygame.Surface.copy(self.screen)
+
     def draw(self):
-        # Fill the screen with black to clear previous drawings
-        self.screen.fill(BLACK)
+        
+        if self.subsurface:
+            # Blit the stored subsurface as the menu background
+            self.screen.blit(self.subsurface, (0, 0))
 
-        # Create a semi-transparent grey overlay
-        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)  # Create a surface with an alpha channel
-        overlay.fill((128, 128, 128, 128))  # Fill with grey and 50% opacity (RGBA)
-        self.screen.blit(overlay, (0, 0))  # Blit the overlay on top of the screen
-
+        # Draw the menu options
         for i, option in enumerate(self.options):
             color = TEXT_COL if i == self.selected else WHITE
             img = font.render(option, True, color)
             # Center the text horizontally and adjust vertically
-            self.screen.blit(img, (self.screen.get_width() // 2 - img.get_width() // 2, 
-                                self.screen.get_height() // 2 - len(self.options) * 20 + i * 40))
-
+            self.screen.blit(
+                img,
+                (self.screen.get_width() // 2 - img.get_width() // 2,
+                 self.screen.get_height() // 2 - len(self.options) * 20 + i * 40)
+            )
+        pygame.display.flip()  # Update the display
     def move_selection(self, direction):
         self.selected += direction
         if self.selected < 0:

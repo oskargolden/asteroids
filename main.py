@@ -16,7 +16,7 @@ def main():
 
     
         
-    start_menu = ["Start Game", "Leader Board", "Options", "Quit"]
+    
     menu = Menu(screen, start_menu)
 
     # Game initialization
@@ -50,12 +50,15 @@ def main():
             # Handle menu events if in the menu
             if in_menu:
                 selected_option = menu.handle_event(event)
-                if selected_option == "Start Game":
+            if selected_option == "Start Game":
                     print("Starting the game...")
                     in_menu = False  # Exit the menu
-                elif selected_option == "Quit":
+            elif selected_option == "Quit":
                     pygame.quit()
                     sys.exit()
+            else:
+                # Capture the game state as a subsurface when entering the menu
+                menu.get_subsurface()
 
         # Clear the screen at the start of each frame
         screen.fill("black")

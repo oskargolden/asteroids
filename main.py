@@ -6,6 +6,7 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 from menu import *
+from score import *
 
 
 def main():
@@ -14,12 +15,10 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
 
-    
-        
-    
+    # Initialize menu
     menu = Menu(screen, start_menu)
     menu_settings = Menu(screen, settings_menu)
-    menu_difficulty = Menu(screen, difficulty_settings) 
+    menu_difficulty = Menu(screen, difficulty_settings)
     menu_leader = Menu(screen, leader_board_menu)
 
     # Game initialization
@@ -31,18 +30,25 @@ def main():
     Asteroid.containers = (asteroids, updatable, drawable)
     Shot.containers = (shots, updatable, drawable)
     AsteroidField.containers = updatable
-    asteroid_field = AsteroidField()
+
+    # Initialize score and lives before creating the asteroid
+    
+    lives_display = Lives(3)  # Starting with 3 lives
+
+    score_display = Score(0)  # Initialize score_display first
+    asteroid_field = AsteroidField(score_display)  # Pass score_display to AsteroidField
+
+    asteroid = Asteroid(100, 100, ASTEROID_MAX_RADIUS, score_display)
 
     Player.containers = (updatable, drawable)
-
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-
     dt = 0
+
     # MENU SELECTING FLAGS
-    in_menu = True  # Flag to track if we're in the main menu
-    in_settings = False  # Flag for settings menu
-    in_difficulty = False  # Flag for difficulty settings
-    in_leader = False  # Flag for leaderboard
+    in_menu = True
+    in_settings = False
+    in_difficulty = False
+    in_leader = False
 
     while True:
         for event in pygame.event.get():
@@ -52,10 +58,9 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     if not in_menu:
-                        in_menu = True  # Go back to the main menu
-                        menu.get_subsurface()  # Capture game state when entering menu
+                        in_menu = True
+                        menu.get_subsurface()
 
-            # Handle menu events if in the menu
             if in_menu:
                 if in_settings:
                     selected_option = menu_settings.handle_event(event)
@@ -64,7 +69,6 @@ def main():
                         in_settings = False
                     elif selected_option == "Back":
                         in_settings = False
-                    # Add more options handling here as needed
                 elif in_difficulty:
                     selected_option = menu_difficulty.handle_event(event)
                     if selected_option == "Back":
@@ -77,7 +81,7 @@ def main():
                 else:
                     selected_option = menu.handle_event(event)
                     if selected_option == "Start Game":
-                        in_menu = False  # Exit the menu to start the game
+                        in_menu = False
                     elif selected_option == "Settings":
                         in_settings = True
                     elif selected_option == "Leader Board":
@@ -86,18 +90,21 @@ def main():
                         pygame.quit()
                         sys.exit()
 
-        # Clear the screen at the start of each frame
         screen.fill("black")
+
+        # Information Display
+        lives_display.draw(20, 20)  # Top-left corner
+        score_display.draw(20, 60)  # Below the lives display
 
         if in_menu:
             if in_settings:
-                menu_settings.draw()  # Draw settings menu
+                menu_settings.draw()
             elif in_difficulty:
-                menu_difficulty.draw()  # Draw difficulty menu
+                menu_difficulty.draw()
             elif in_leader:
-                menu_leader.draw()  # Draw leaderboard
+                menu_leader.draw()
             else:
-                menu.draw()  # Draw main menu
+                menu.draw()
         else:
             # Update and draw game objects
             for obj in updatable:
@@ -105,9 +112,10 @@ def main():
 
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
-                    print("Game over!")
-                    pygame.quit()
-                    sys.exit()
+                    lives_display.lives -= 1  # Deduct a life
+                    if lives_display.lives <= 0:
+                        print("Collision Life Lost")
+                        
 
             for shot in shots:
                 for asteroid in asteroids:
@@ -115,15 +123,12 @@ def main():
                         shot.kill()
                         asteroid.split()
 
-            # Draw all drawable objects
             for obj in drawable:
                 obj.draw(screen)
 
-        # Update the display once after drawing everything
         pygame.display.flip()
-
-        # Limit the framerate to 60 FPS
         dt = clock.tick(60) / 1000
+
 
 
 if __name__ == "__main__":

@@ -8,6 +8,7 @@ ASTEROID_MIN_RADIUS = 20
 ASTEROID_KINDS = 3
 ASTEROID_SPAWN_RATE = 0.8  # seconds
 ASTEROID_MAX_RADIUS = ASTEROID_MIN_RADIUS * ASTEROID_KINDS
+ASTERIOD_VALUE = 5
 
 PLAYER_RADIUS = 20
 PLAYER_TURN_SPEED = 300
@@ -22,9 +23,11 @@ SHOT_RADIUS = 8
 # MEDIUM DIFFICULTY "WARDEN" SETTINGS
 
 def medium_diff(radius_min, radius_mx, kinds, spawn, player_speed, shoot_speed, shoot_cooldown):
+    rad_min = radius_min * 1.2
+    rad_max = radius_mx * 1.2
 
     pass
-    return None 
+    return 
     
 
 
@@ -33,4 +36,4 @@ def medium_diff(radius_min, radius_mx, kinds, spawn, player_speed, shoot_speed, 
 # HARD DIFFCULTLY "STAR DESTROYER"
 
 def hard_diff(radius_min, radius_mx, kinds, spawn, player_speed, shoot_speed, shoot_cooldown):
-    return 
+    return None

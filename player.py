@@ -4,7 +4,7 @@ from circleshape import CircleShape
 from shot import Shot
 from menu import *
 
- #menu setup
+
 
 
 class Player(CircleShape):

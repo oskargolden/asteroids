@@ -15,6 +15,7 @@ font = pygame.font.SysFont("arialblack", 40)
 start_menu = ["Start Game", "Leader Board", "Settings", "Quit"]
 settings_menu = ["Difficulty", "Screen Size", "Items", "Back"]
 difficulty_settings = ["Young", "Warden", "Star Destroyer", "Back"]
+game_over = ["GAME OVER", "TRY AVOIDING THE","ASTERIODS NEXT TIME"]
 
 options_menu = []
 leader_board_dict = {}

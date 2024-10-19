@@ -20,6 +20,7 @@ def main():
     menu_settings = Menu(screen, settings_menu)
     menu_difficulty = Menu(screen, difficulty_settings)
     menu_leader = Menu(screen, leader_board_menu)
+    death = Menu(screen, game_over)
 
     # Game initialization
     updatable = pygame.sprite.Group()
@@ -42,6 +43,7 @@ def main():
 
     Player.containers = (updatable, drawable)
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    spawn_zone = CircleShape(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 5)
     dt = 0
 
     # MENU SELECTING FLAGS
@@ -55,12 +57,14 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            # Start of Menu Opening     
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     if not in_menu:
                         in_menu = True
                         menu.get_subsurface()
-
+            # Menu Logic 
             if in_menu:
                 if in_settings:
                     selected_option = menu_settings.handle_event(event)
@@ -112,9 +116,25 @@ def main():
 
             for asteroid in asteroids:
                 if asteroid.collides_with(player):
-                    lives_display.lives -= 1  # Deduct a life
+                    # Deduct a life
+                    lives_display.lives -= 1
+                    
+                    # Reset player position to the middle of the screen
+                    if asteroid.collides_with(spawn_zone):
+                        pass
+                    else:
+                        player.position = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+                    
+                   
+                    
                     if lives_display.lives <= 0:
-                        print("Collision Life Lost")
+                        # Handle game over logic 
+                        death.draw()
+                    else:
+                        # # Clear all asteroids
+                    
+                        AsteroidField.containers = updatable # Remove all current asteroids
+                        
                         
 
             for shot in shots:

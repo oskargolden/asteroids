@@ -83,11 +83,14 @@ def leader_board_helper(dict):
 
 # only display the top 3 
 #secondary page load for all recorded scores
-def leader_board(dict) -> dict:
-    big = float("-inf")
-
-    for key, value in dict.item():
-        if value > big:
-            big = value
-        pass
+def leader_board(lst) -> list:  #Bubble Sort List should never be longer than 100 players long. 
+    for j in lst:
+        for i in lst:
+            if lst[i][1] > lst[i + 1 ][1]:
+                lst[i][1], lst[i + 1] = lst[i + 1], lst[i][1]
+    
+    if len(lst) > 100:
+        del lst[-1]
+    
+    return lst
     

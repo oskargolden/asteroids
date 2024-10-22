@@ -43,7 +43,7 @@ def main():
 
     Player.containers = (updatable, drawable)
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-    spawn_zone = CircleShape(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 5)
+    spawn_zone = CircleShape(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 30)
     dt = 0
 
     # MENU SELECTING FLAGS
@@ -51,103 +51,106 @@ def main():
     in_settings = False
     in_difficulty = False
     in_leader = False
+    
 
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-            # Start of Menu Opening     
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    if not in_menu:
-                        in_menu = True
-                        menu.get_subsurface()
-            # Menu Logic 
+                # Start of Menu Opening     
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        if not in_menu:
+                            in_menu = True
+                            menu.get_subsurface()
+                # Menu Logic 
+                if in_menu:
+                    if in_settings:
+                        selected_option = menu_settings.handle_event(event)
+                        if selected_option == "Difficulty":
+                            in_difficulty = True
+                            in_settings = False
+                        elif selected_option == "Back":
+                            in_settings = False
+                    elif in_difficulty:
+                        selected_option = menu_difficulty.handle_event(event)
+                        if selected_option == "Back":
+                            in_difficulty = False
+                            in_settings = True
+                    elif in_leader:
+                        selected_option = menu_leader.handle_event(event)
+                        if selected_option == "Back":
+                            in_leader = False
+                    else:
+                        selected_option = menu.handle_event(event)
+                        if selected_option == "Start Game":
+                            in_menu = False
+                        elif selected_option == "Settings":
+                            in_settings = True
+                        elif selected_option == "Leader Board":
+                            in_leader = True
+                        elif selected_option == "Quit":
+                            pygame.quit()
+                            sys.exit()
+
+            screen.fill("black")
+
+            # Information Display
+            lives_display.draw(20, 20)  # Top-left corner
+            score_display.draw(20, 60)  # Below the lives display
+
             if in_menu:
                 if in_settings:
-                    selected_option = menu_settings.handle_event(event)
-                    if selected_option == "Difficulty":
-                        in_difficulty = True
-                        in_settings = False
-                    elif selected_option == "Back":
-                        in_settings = False
+                    menu_settings.draw()
                 elif in_difficulty:
-                    selected_option = menu_difficulty.handle_event(event)
-                    if selected_option == "Back":
-                        in_difficulty = False
-                        in_settings = True
+                    menu_difficulty.draw()
                 elif in_leader:
-                    selected_option = menu_leader.handle_event(event)
-                    if selected_option == "Back":
-                        in_leader = False
+                    menu_leader.draw()
                 else:
-                    selected_option = menu.handle_event(event)
-                    if selected_option == "Start Game":
-                        in_menu = False
-                    elif selected_option == "Settings":
-                        in_settings = True
-                    elif selected_option == "Leader Board":
-                        in_leader = True
-                    elif selected_option == "Quit":
-                        pygame.quit()
-                        sys.exit()
-
-        screen.fill("black")
-
-        # Information Display
-        lives_display.draw(20, 20)  # Top-left corner
-        score_display.draw(20, 60)  # Below the lives display
-
-        if in_menu:
-            if in_settings:
-                menu_settings.draw()
-            elif in_difficulty:
-                menu_difficulty.draw()
-            elif in_leader:
-                menu_leader.draw()
+                    menu.draw()
             else:
-                menu.draw()
-        else:
-            # Update and draw game objects
-            for obj in updatable:
-                obj.update(dt)
+                # Update and draw game objects
+                for obj in updatable:
+                    obj.update(dt)
 
-            for asteroid in asteroids:
-                if asteroid.collides_with(player):
-                    # Deduct a life
-                    lives_display.lives -= 1
-                    
-                    # Reset player position to the middle of the screen
-                    if asteroid.collides_with(spawn_zone):
-                        pass
-                    else:
-                        player.position = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-                    
-                   
-                    
-                    if lives_display.lives <= 0:
-                        # Handle game over logic 
-                        death.draw()
-                    else:
-                        # # Clear all asteroids
-                    
-                        AsteroidField.containers = updatable # Remove all current asteroids
-                        
-                        
-
-            for shot in shots:
                 for asteroid in asteroids:
-                    if asteroid.collides_with(shot):
-                        shot.kill()
-                        asteroid.split()
+                    if asteroid.collides_with(player):
+                        # Deduct a life
+                        lives_display.lives -= 1
+                        
+                        # Reset player position to the middle of the screen
+                        if asteroid.collides_with(spawn_zone):
+                            pass
+                        else:
+                            player.position = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+                        
+                    
+                        
+                        if lives_display.lives <= 0 and lives_display.lives < 1:
+                            # Handle game over logic 
+                            in_menu = True
+                            in_leader = True
+                            asteroids.clear
+                            lives_display.lives = 3  # Starting with 3 lives
+                            score_display.score = 0
+                            
+                       
+                            
+                            
 
-            for obj in drawable:
-                obj.draw(screen)
+                for shot in shots:
+                    for asteroid in asteroids:
+                        if asteroid.collides_with(shot):
+                            shot.kill()
+                            asteroid.split()
 
-        pygame.display.flip()
-        dt = clock.tick(60) / 1000
+                for obj in drawable:
+                    obj.draw(screen)
+
+            pygame.display.flip()
+            dt = clock.tick(60) / 1000
 
 
 

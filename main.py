@@ -119,10 +119,11 @@ def main():
                     if asteroid.collides_with(player):
                         # Deduct a life
                         lives_display.lives -= 1
+
                         
                         # Reset player position to the middle of the screen
                         if asteroid.collides_with(spawn_zone):
-                            pass
+                            asteroid.kill()
                         else:
                             player.position = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
                         
